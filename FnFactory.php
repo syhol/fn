@@ -19,6 +19,8 @@ class FnFactory
             if (is_string($class) && ! method_exists($class, $method)) $method = '__callStatic';
             if (is_object($class) && ! method_exists($class, $method)) $method = '__call';
             $reflection = new ReflectionMethod($class, $method);
+            if ( ! $reflection->isStatic() && ! is_object($class) )
+                throw new \Exception('Calling non static method without an instance');
         } 
 
         if ($callable instanceof Closure || is_string($callable))
