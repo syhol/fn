@@ -2,6 +2,8 @@
 
 namespace Syhol\Fn;
 
+use ReflectionMethod;
+use ReflectionFunction;
 use Exception;
 
 class FnFactory
@@ -13,24 +15,42 @@ class FnFactory
         if (is_string($callable) && strpos($callable, '::') !== false)
             $callable = explode('::', $this->callable, 2);
 
-        if (is_array($callable) && count($callable) === 2)
-        {
-            list($class, $method) = array_values($callable);
-            if (is_string($class) && ! method_exists($class, $method)) $method = '__callStatic';
-            if (is_object($class) && ! method_exists($class, $method)) $method = '__call';
-            $reflection = new ReflectionMethod($class, $method);
-            if ( ! $reflection->isStatic() && ! is_object($class) )
-                throw new \Exception('Calling non static method without an instance');
-        } 
+        if (is_array($callable) && count($callable) === 2) {
+            $reflection = $this->parseMethod($callable);
+        } else {
+            $reflection = $this->parseFunction($callable);
+        }
 
+        if ( ! ($reflection instanceof ReflectionFunctionAbstract) )
+            throw new Exception('Could not parse function');
+            
+        return new Fn($callable, $reflection);
+    }
+    
+    private function parseMethod(callable $callable)
+    {
+        list($class, $method) = array_values($callable);
+        
+        if (is_string($class) && ! method_exists($class, $method))
+            $method = '__callStatic';
+        
+        if (is_object($class) && ! method_exists($class, $method))
+            $method = '__call';
+            
+        $reflection = new ReflectionMethod($class, $method);
+        
+        if ( ! $reflection->isStatic() && ! is_object($class) )
+            throw new Exception('Calling non static method without an instance');
+            
+        return $reflection;
+    }
+    
+    private function parseOther(callable $callable)
+    {
         if ($callable instanceof Closure || is_string($callable))
-            $reflection = new ReflectionFunction($callable);
-
+            return new ReflectionFunction($callable);
+            
         if (is_object($callable) && method_exists($callable, '__invoke'))
-            $reflection = new ReflectionMethod($callable, '__invoke');
-
-        $parameters = $reflection ? $this->reflection->getParameters() : [] ;
-
-        return new Fn($callable, $parameters);
+            return new ReflectionMethod($callable, '__invoke');
     }
 }
