@@ -18,7 +18,7 @@ class FnFactory
         if (is_array($callable) && count($callable) === 2) {
             $reflection = $this->parseMethod($callable);
         } else {
-            $reflection = $this->parseFunction($callable);
+            $reflection = $this->parseOther($callable);
         }
 
         if ( ! ($reflection instanceof ReflectionFunctionAbstract) )
