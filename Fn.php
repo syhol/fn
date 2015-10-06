@@ -11,14 +11,14 @@ class Fn
 {
 	protected $arguments = [];
 
-    protected $reflection;
+	protected $reflection;
 
-    protected $callable;
+	protected $callable;
 
 	public function __construct(callable $callable, ReflectionFunctionAbstract $reflection)
 	{
-        $this->callable = $callable;
-        $this->reflection = $reflection;
+		$this->callable = $callable;
+		$this->reflection = $reflection;
 	}
 
 	public function __invoke()
@@ -63,15 +63,15 @@ class Fn
 		
 	}
 
-    public function curryStop()
-    {
-        
-    }
+	public function curryStop()
+	{
+		
+	}
 
-    public function impelments($interface)
-    {
-        return true ? true : false;
-    }
+	public function impelments($interface)
+	{
+		return true ? true : false;
+	}
 
 	public function unbindArgs()
 	{
