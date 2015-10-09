@@ -13,19 +13,17 @@ class FnContainer
 
     protected $items = [];
 
-    public function __construct(FnFactory $factory)
+    public function __construct(FnFactory $factory, callable $notFoundResolver = null)
     {
-        $this->items['fnFactory'] = $factory->parse([$factory, 'parse']);
-        $this->items['fnContainer'] = $factory->poly(
-            [$this, 'set'],
-            [$this, 'get'],
-        );
-        $this->notFoundResolver = function(){};
+        $this->factory = $factory;
+        $this->notFoundResolver = $notFoundResolver ? : function(){ throw new Exception('Function not found'); };
+        $this->items['fnFactory'] = $this->parse([$factory, 'parse']);
+        $this->items['fnContainer'] = $this->poly([$this, 'set'], [$this, 'get']);
     }
 
     public function set($key, callable $fn)
     {
-        $this->items[$key] = $this->factory->parse($fn);
+        $this->items[$key] = $this->parse($fn);
 
         return $this;
     }
@@ -40,6 +38,16 @@ class FnContainer
     public function get($key)
     {
         return isset($this->items[$key]) ? $this->items[$key] ? $this->notFoundResolver($key) ;
+    }
+
+    public function parse(callable $callable)
+    {
+        return $factory->parse($callable);
+    }
+    
+    public function poly(array $items)
+    {
+        return $factory->poly($items);
     }
 
     public function setGlobal(FnContainer $container)
