@@ -10,6 +10,8 @@ class FnFactory
 {
     public function parse(callable $callable)
     {
+        if ($callable instanceof Fn) return $callable;
+        
         $reflection = null;
 
         if (is_string($callable) && strpos($callable, '::') !== false)
