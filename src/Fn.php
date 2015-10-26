@@ -2,10 +2,7 @@
 
 namespace Syhol\Fn;
 
-use Closure;
-use ReflectionFunction;
-use ReflectionMethod;
-use Exception;
+use ReflectionFunctionAbstract;
 
 class Fn
 {

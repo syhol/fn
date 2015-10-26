@@ -15,7 +15,7 @@ class FnFacade
     {
         $this->factory = $factory;
         $this->container = $container;
-        $container->set('fnFactory', $factory->parse([$factory, 'parse']));
+        $container->set('fnFactory', $this->poly([$factory, 'parse']));
         $container->set('fnContainer', $this->poly([$this, 'set'], [$this, 'get']));
     }
 

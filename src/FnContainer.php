@@ -34,6 +34,6 @@ class FnContainer
 
     public function get($key)
     {
-        return isset($this->items[$key]) ? $this->items[$key] ? $this->notFoundResolver($key) ;
+        return isset($this->items[$key]) ? $this->items[$key] : $this->notFoundResolver($key) ;
     }
 }

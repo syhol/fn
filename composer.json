@@ -1,0 +1,21 @@
+{
+    "name": "syhol/fn",
+    "description": "Function Goodness",
+    "autoload": {
+        "psr-4": {
+            "Syhol\\Fn\\": "src"
+	}
+    },
+    "require-dev": {
+        "behat/behat": "^3.0",
+        "phpspec/phpspec": "^2.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simon Holloway",
+            "email": "simon@syhol.io"
+        }
+    ],
+    "require": {}
+}
