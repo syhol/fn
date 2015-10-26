@@ -1,0 +1,4 @@
+suites:
+    default:
+        namespace: Syhol\Fn
+        psr4_prefix: Syhol\Fn
