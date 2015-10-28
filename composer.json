@@ -4,7 +4,10 @@
     "autoload": {
         "psr-4": {
             "Syhol\\Fn\\": "src"
-	}
+        },
+        "files": [
+            "spec/test-bootstrap.php"
+        ]
     },
     "require-dev": {
         "behat/behat": "^3.0",

@@ -15,8 +15,8 @@ class FnFacade
     {
         $this->factory = $factory;
         $this->container = $container;
-        $container->set('fnFactory', $this->poly([$factory, 'parse']));
-        $container->set('fnContainer', $this->poly([$this, 'set'], [$this, 'get']));
+        $container->set('fnFactory', [$factory, 'parse']);
+        $container->set('fnContainer', [$this, 'get']);
     }
 
     public function set($key, callable $fn)
