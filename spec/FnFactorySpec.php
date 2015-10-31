@@ -62,14 +62,18 @@ class FnFactorySpec extends ObjectBehavior
     {
         $this->parse(function($arg){ return 1 + $arg; })->shouldHaveType(Fn::class);
     }
-//
-//    function it_throws_on_non_static_method_with_class_name()
-//    {
-//        $this->shouldThrow(Exception::class)->duringParse([TestClass::class, 'test']);
-//    }
-//
-//    function it_throws_on_non_static_method_with_class_name_string()
-//    {
-//        $this->shouldThrow(Exception::class)->duringParse(TestClass::class . '::test');
-//    }
+
+    function it_throws_on_non_static_method_with_class_name()
+    {
+        $oldLevel = error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+        $this->shouldThrow(Exception::class)->duringParse([TestClass::class, 'test']);
+        error_reporting($oldLevel);
+    }
+
+    function it_throws_on_non_static_method_with_class_name_string()
+    {
+        $oldLevel = error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+        $this->shouldThrow(Exception::class)->duringParse(TestClass::class . '::test');
+        error_reporting($oldLevel);
+    }
 }

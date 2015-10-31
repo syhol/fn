@@ -7,6 +7,14 @@ use ReflectionMethod;
 use ReflectionFunction;
 use Exception;
 
+/**
+ * Class FnFactory
+ *
+ * FnFactory creates new Fn objects from callables
+ *
+ * @package Syhol\Fn
+ * @author Simon Holloway <simon@syhol.io>
+ */
 class FnFactory
 {
     /**
