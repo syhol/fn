@@ -6,6 +6,7 @@ use Closure;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use ReflectionFunction;
+use Syhol\Fn\Fn;
 
 class FnSpec extends ObjectBehavior
 {
@@ -32,6 +33,6 @@ class FnSpec extends ObjectBehavior
 
     function it_should_apply_partial_left()
     {
-        $this->partialLeft([1, 2])->shouldBeArray('array');
+        $this->partialLeft([1, 2])->shouldHaveType(Fn::class);
     }
 }
