@@ -55,7 +55,8 @@ class Fn
         $args = $this->arguments;
 
         foreach ($passed as $key => $arg) {
-            $args[is_string($key) ? $key : $this->getNextLeftIndex()] = $arg;
+            $key = is_string($key) ? $this->getParameterIndexFromName($key) : $this->getNextLeftIndex();
+            $args[$key] = $arg;
         }
 
         return $args;

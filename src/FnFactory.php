@@ -68,17 +68,20 @@ class FnFactory
     {
         list($class, $method) = array_values($callable);
         
-        if (is_string($class) && ! method_exists($class, $method))
+        if (is_string($class) && ! method_exists($class, $method)) {
             $method = '__callStatic';
-        
-        if (is_object($class) && ! method_exists($class, $method))
+        }
+
+        if (is_object($class) && ! method_exists($class, $method)) {
             $method = '__call';
-            
+        }
+
         $reflection = new ReflectionMethod($class, $method);
         
-        if ( ! $reflection->isStatic() && ! is_object($class) )
+        if ($reflection->isStatic() === false && is_object($class) === false) {
             throw new Exception('Calling non static method without an instance');
-            
+        }
+
         return $reflection;
     }
 }
