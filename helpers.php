@@ -1,21 +1,9 @@
 <?php
 
-if ( ! function_exists('fnf'))
+if ( ! function_exists('fn'))
 {
-    function fnf()
+    function fn(callable $fn)
     {
-        return Syhol\Fn\FnFacade::getGlobal()
-            ->get('fnFactory')
-            ->apply(func_get_args());
-    }
-}
-
-if ( ! function_exists('fnc'))
-{
-    function fnc()
-    {
-        return Syhol\Fn\FnFacade::getGlobal()
-            ->get('fnContainer')
-            ->apply(func_get_args());
+        return (new Syhol\Fn\FnFactory)->parse($fn);
     }
 }

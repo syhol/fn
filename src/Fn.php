@@ -2,9 +2,10 @@
 
 namespace Syhol\Fn;
 
+use ArrayAccess;
 use ReflectionFunctionAbstract;
 
-class Fn
+class Fn implements ArrayAccess
 {
     /**
      * @var array
@@ -212,5 +213,64 @@ class Fn
         }
 
         return $this->getNextLeftIndex();
+    }
+
+    /**
+     * Whether an argument exists
+     *
+     * @param mixed $key
+     * @return boolean true on success or false on failure.
+     */
+    public function offsetExists($key)
+    {
+        $key = is_string($key) ? $this->getParameterIndexFromName($key) : $key;
+        $key = $key === false ? -1 : $key ;
+        return isset($this->arguments[$key]);
+    }
+
+    /**
+     * Argument to retrive
+     *
+     * @param mixed $key
+     * @return mixed Can return all value types.
+     */
+    public function offsetGet($key)
+    {
+        $key = is_string($key) ? $this->getParameterIndexFromName($key) : $key;
+        $key = $key === false ? -1 : $key ;
+        return isset($this->arguments[$key]) ? $this->arguments[$key] : null;
+    }
+
+    /**
+     * Argument to set
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($key, $value)
+    {
+        if (is_null($key)) {
+            $this->arguments[$this->getNextLeftIndex()] = $value;
+        } else {
+            $key = is_string($key) ? $this->getParameterIndexFromName($key) : $key;
+            if ($key !== false) {
+                $this->arguments[$key] = $value;
+            }
+        }
+    }
+
+    /**
+     * Argument to unset
+     *
+     * @param mixed $key
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        $key = is_string($key) ? $this->getParameterIndexFromName($key) : $key;
+        if ($key !== false) {
+            unset($this->arguments[$key]);
+        }
     }
 }

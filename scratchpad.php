@@ -14,21 +14,21 @@ Invokables:
 
 // simple composition
 
-$not = f(function($value) { return ! $value; });
-$even = f(function($value) { return $value % 2 === 0; });
-$empty = f(function($value) { return empty($value); });
-$min = f('min');
+$not = fn(function($value) { return ! $value; });
+$even = fn(function($value) { return $value % 2 === 0; });
+$empty = fn(function($value) { return empty($value); });
+$min = fn('min');
 $notEmpty = $empty->compose($not);
 $odd = $even->compose($not);
 
-$isFalse = f()->compose('not', 'isEven');
+$isFalse = fn()->compose('not', 'isEven');
 
 array_filter($isFalse, [false, true, false, true]);
 
 
 // Named properties
 
-$add = f(function($a, $b) {
+$add = fn(function($a, $b) {
     return $a + $b;
 });
 
@@ -50,7 +50,7 @@ $add(); // 10
 
 $add7and9(); // 14
 
-$add = $add->unbindArgs();
+$add = $add->unbound();
 
 $add[] = 1; // 1 bound to $a
 
@@ -58,7 +58,7 @@ $add(2); // 3
 
 // Complicated composition
 
-$addDoubles = fnf(function($a, $b, $func) {
+$addDoubles = fn(function($a, $b, $func) {
     list($a, $b) = [$b * 2, $a * 2];
     return $func($a, $b);
 })->partialRight($add);
@@ -85,7 +85,7 @@ $add->then($applyMember);
 
 // Methods also
 // @deprecated
-// fnf([$instance, 'methodName'])
+// fn([$instance, 'methodName'])
 //     ->pipe([$a1, 'method1'])
 //     ->pipe([$a2, 'method2'])
 //     ->pipe([$a3, 'method3'])
@@ -94,7 +94,7 @@ $add->then($applyMember);
 
 // Anons get there params bound
 
-$func = fnf(function($var1) {
+$func = fn(function($var1) {
     return $var1 + $this->var2;
 });
 
@@ -111,7 +111,7 @@ $func2['greet'] = 'Hello';
 
 $func2();
 
-$getFromArray = fnf(function($var) {
+$getFromArray = fn(function($var) {
     return $var[$this->key];
 });
 
@@ -122,21 +122,21 @@ $getFromArray(['foo' => 1, 'bar' => 2]); // 2
 
 // Polymorphic functions
 
-$poly = fnf()->poly(
-    function($a) {
-        return '$a is great but only a?';
-    },
-    function($a, $b) {
-        return 'Perfect, thats $a $b';
-    },
-    function($a, $b, $c) {
-        return '$a, $b and $c! wow, thats too much?';
-    }
-);
-
-$poly(1); // $a is great but only a?
-$poly(1, 2); // Perfect, thats $a $b
-$poly(1, 2 ,3); // $a, $b and $c! wow, thats too much?
+//$poly = fn()->poly(
+//    function($a) {
+//        return '$a is great but only a?';
+//    },
+//    function($a, $b) {
+//        return 'Perfect, thats $a $b';
+//    },
+//    function($a, $b, $c) {
+//        return '$a, $b and $c! wow, thats too much?';
+//    }
+//);
+//
+//$poly(1); // $a is great but only a?
+//$poly(1, 2); // Perfect, thats $a $b
+//$poly(1, 2 ,3); // $a, $b and $c! wow, thats too much?
 
 
 // $f->parse(function(){
@@ -163,14 +163,5 @@ $poly(1, 2 ,3); // $a, $b and $c! wow, thats too much?
 // Invoking the facade and others
 
 Fn::parse(function(){});
-fnf(function(){});
+fn(function(){});
 FnFactory::parse(function(){});
-
-
-Fn::get(function(){});
-fnc('notEmpty');
-FnContainer::get('notEmpty');
-
-Fn::set('notEmpty', function($a) { return ! empty($a); });
-fnc('notEmpty', function($a) { return ! empty($a); });
-FnContainer::set('notEmpty', function($a) { return ! empty($a); });
