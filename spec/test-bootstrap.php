@@ -1,9 +1,14 @@
 <?php
 namespace spec\Syhol\Fn;
 
-class TestClass
+class TestClass implements TestInterface
 {
-    public function test($input)
+    public function test(array $input, callable $that, $what = 'string', $something = null)
+    {
+        return 'whooo ' . $input;
+    }
+
+    public function implmentedMethod($input)
     {
         return 'whooo ' . $input;
     }
@@ -12,6 +17,11 @@ class TestClass
     {
         return 'whooo ' . $input;
     }
+}
+
+interface TestInterface
+{
+    public function test(array $input, callable $that, $what = 'string', $something = null);
 }
 
 class MagicClass

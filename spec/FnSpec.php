@@ -35,4 +35,20 @@ class FnSpec extends ObjectBehavior
     {
         $this->partialLeft([1, 2])->shouldHaveType(Fn::class);
     }
+
+    function it_should_check_implementation_and_fail(ReflectionFunction $reflect)
+    {
+        $interface = new \ReflectionMethod(TestInterface::class, 'test');
+
+        $reflect->getParameters()->willReturn([]);
+        $this->implementsInterface($interface)->shouldBe(false);
+    }
+
+    function it_should_check_implementation(ReflectionFunction $reflect)
+    {
+        $interface = new \ReflectionMethod(TestInterface::class, 'test');
+
+        $reflect->getParameters()->willReturn($interface->getParameters());
+        $this->implementsInterface($interface)->shouldBe(true);
+    }
 }
