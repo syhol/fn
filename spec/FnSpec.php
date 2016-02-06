@@ -2,7 +2,6 @@
 
 namespace spec\Syhol\Fn;
 
-use Closure;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use ReflectionFunction;
@@ -40,7 +39,7 @@ class FnSpec extends ObjectBehavior
     {
         $interface = new \ReflectionMethod(TestInterface::class, 'test');
 
-        $reflect->getParameters()->willReturn([]);
+        $reflect->getParameters()->willReturn(array_slice($interface->getParameters(), 0, -1));
         $this->implementsInterface($interface)->shouldBe(false);
     }
 
@@ -50,5 +49,22 @@ class FnSpec extends ObjectBehavior
 
         $reflect->getParameters()->willReturn($interface->getParameters());
         $this->implementsInterface($interface)->shouldBe(true);
+    }
+
+    function it_should_compose(Fn $other)
+    {
+        $other->pipe($this)->willReturn($other)->shouldBeCalled();
+        $this->compose($other)->shouldHaveType(Fn::class);
+
+        $pipe = $this->compose(fn(function ($a) { return 'boz:' . $a; }));
+        $pipe->shouldHaveType(Fn::class);
+        $pipe->__invoke('qux')->shouldReturn('foo:boz:qux');
+    }
+
+    function it_should_pipe()
+    {
+        $pipe = $this->pipe(fn(function ($a) { return $a . 'boz'; }));
+        $pipe->shouldHaveType(Fn::class);
+        $pipe->__invoke('qux:')->shouldReturn('foo:qux:boz');
     }
 }

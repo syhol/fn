@@ -2,6 +2,7 @@
 
 namespace Syhol\Fn;
 
+use Exception;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
 
@@ -20,12 +21,15 @@ class ImplementationChecker
     ];
 
     /**
-     * @param ReflectionFunctionAbstract $left
-     * @param ReflectionFunctionAbstract $right
+     * @param $left
+     * @param $right
      * @return bool
      */
-    public function checkFunctions(ReflectionFunctionAbstract $left, ReflectionFunctionAbstract $right)
+    public function checkFunctions($left, $right)
     {
+        $left = $this->parseInterface($left);
+        $right = $this->parseInterface($right);
+
         $leftParams = $left->getParameters();
 
         foreach ($right->getParameters() as $key => $rightParam) {
@@ -77,5 +81,27 @@ class ImplementationChecker
         return $param->getClass() instanceof ReflectionClass
             ? $param->getClass()->getName()
             : null;
+    }
+
+    /**
+     * @param mixed $interface
+     * @return ReflectionFunctionAbstract
+     * @throws Exception
+     */
+    private function parseInterface($interface)
+    {
+        if ($interface instanceof Fn) {
+            return $interface->reflect();
+        }
+
+        if ($interface instanceof ReflectionFunctionAbstract) {
+            return $interface;
+        }
+
+        try {
+            return (new FnFactory)->parse($interface);
+        } catch (Exception $exception) {
+            throw new Exception('Can\'t parse interface');
+        }
     }
 }

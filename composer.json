@@ -6,6 +6,7 @@
             "Syhol\\Fn\\": "src"
         },
         "files": [
+            "./helpers.php",
             "spec/test-bootstrap.php"
         ]
     },

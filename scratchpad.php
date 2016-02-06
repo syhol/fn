@@ -18,12 +18,12 @@ $not = fn(function($value) { return ! $value; });
 $even = fn(function($value) { return $value % 2 === 0; });
 $empty = fn(function($value) { return empty($value); });
 $min = fn('min');
-$notEmpty = $empty->compose($not);
-$odd = $even->compose($not);
+$notEmpty = $empty->pipe($not);
+$odd = $even->pipe($not);
 
-$isFalse = fn()->compose('not', 'isEven');
+$isFalse = $even->pipe(fn('not'));
 
-array_filter($isFalse, [false, true, false, true]);
+array_filter([false, true, false, true], $isFalse);
 
 
 // Named properties
@@ -32,29 +32,43 @@ $add = fn(function($a, $b) {
     return $a + $b;
 });
 
-$add['b'] = 5;  // 5 bound to a $b 
-
-$add7 = $add->partialFor('b', 7); // 7 bound to a $b in a returned clone
-
-$add7(3); // 10
+$add['a'] = 5; // 5 bound to $a
 
 $add(3); //8 
 
-$add['a'] = 5; // 5 bound to $a
+$add['b'] = 5; // 5 bound to $b
 
 $add(); // 10
 
-$add7and9 = $add->partialAt(1, 9); // 9 bound to a the param at index 1 (on a 0 based index)
+$add = $add->clearArguments();
 
-$add(); // 10
+$add['b'] = 5;  // 5 bound to a $b
 
-$add7and9(); // 14
+$add7and5 = $add->partialFor('b', 7); // 7 bound to a $b in a returned clone
 
-$add = $add->unbound();
+$add7and5(); // 10
+
+// Index properties
+
+$add9 = $add->partialAt(0, 9); // 9 bound to a the param at index 1 (on a 0 based index)
+
+$add9and7 = $add9->partialAt(1, 7); // 9 bound to a the param at index 2 (on a 0 based index)
+
+$add9and7(); // 16
+
+$add9(2); // 11
 
 $add[] = 1; // 1 bound to $a
 
 $add(2); // 3
+
+$add[] = 6; // 6 bound to $b
+
+$add(); // 7
+
+$add[1] = 5; // 5 bound to $b
+
+$add(); // 6
 
 // Complicated composition
 
@@ -63,13 +77,13 @@ $addDoubles = fn(function($a, $b, $func) {
     return $func($a, $b);
 })->partialRight($add);
 
-$add = $add->then(function($response) {
+$add = $add->pipe(function($response) {
     return 'The results is: ' . $response;
 });
-
-$add = $add->onFail(function(Exception $e) {
-    Monolog::error($e->getMessage());
-});
+//
+//$add = $add->onFail(function(Exception $e) {
+//    Monolog::error($e->getMessage());
+//});
 
 $setMember = function($memberId, $companyId) {
     // Do something
@@ -80,7 +94,7 @@ $applyMember = function($response) use($setMember) {
     return $response;
 };
 
-$add->then($applyMember);
+$add->pipe($applyMember);
 
 
 // Methods also
@@ -93,31 +107,31 @@ $add->then($applyMember);
 
 
 // Anons get there params bound
-
-$func = fn(function($var1) {
-    return $var1 + $this->var2;
-});
-
-$func['var2'] = 7;
-
-$func(3); // 10 
-
-$func2 = f(function() {
-    return $this->greet + ' ' + $this->name;
-});
-
-$func2['name'] = 'Simon';
-$func2['greet'] = 'Hello';
-
-$func2();
-
-$getFromArray = fn(function($var) {
-    return $var[$this->key];
-});
-
-$getFromArray['key'] = 'bar';
-
-$getFromArray(['foo' => 1, 'bar' => 2]); // 2
+//
+//$func = fn(function($var1) {
+//    return $var1 + $this->var2;
+//});
+//
+//$func['var2'] = 7;
+//
+//$func(3); // 10
+//
+//$func2 = f(function() {
+//    return $this->greet + ' ' + $this->name;
+//});
+//
+//$func2['name'] = 'Simon';
+//$func2['greet'] = 'Hello';
+//
+//$func2();
+//
+//$getFromArray = fn(function($var) {
+//    return $var[$this->key];
+//});
+//
+//$getFromArray['key'] = 'bar';
+//
+//$getFromArray(['foo' => 1, 'bar' => 2]); // 2
 
 
 // Polymorphic functions
@@ -162,6 +176,6 @@ $getFromArray(['foo' => 1, 'bar' => 2]); // 2
 
 // Invoking the facade and others
 
-Fn::parse(function(){});
+//Fn::parse(function(){});
 fn(function(){});
 FnFactory::parse(function(){});

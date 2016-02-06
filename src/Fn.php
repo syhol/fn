@@ -3,7 +3,9 @@
 namespace Syhol\Fn;
 
 use ArrayAccess;
+use ReflectionClass;
 use ReflectionFunctionAbstract;
+use ReflectionMethod;
 
 class Fn implements ArrayAccess
 {
@@ -44,7 +46,9 @@ class Fn implements ArrayAccess
     {
         $arguments = $this->buildArguments(func_get_args());
 
-        return call_user_func_array($this->callable, $arguments);
+        return $this->reflection instanceof ReflectionMethod && $this->reflection->isConstructor()
+            ? (new ReflectionClass($this->reflection->class))->newInstanceArgs($arguments)
+            : call_user_func_array($this->callable, $arguments);
     }
 
     /**
@@ -88,7 +92,7 @@ class Fn implements ArrayAccess
 
     /**
      * @param $arg
-     * @return Fn
+     * @return static
      */
     public function partialLeft($arg)
     {
@@ -97,7 +101,7 @@ class Fn implements ArrayAccess
 
     /**
      * @param $arg
-     * @return Fn
+     * @return static
      */
     public function partialRight($arg)
     {
@@ -107,7 +111,7 @@ class Fn implements ArrayAccess
     /**
      * @param $name
      * @param $arg
-     * @return Fn
+     * @return static
      */
     public function partialFor($name, $arg)
     {
@@ -130,6 +134,32 @@ class Fn implements ArrayAccess
         return new static($this->callable, $this->reflection, $args);
     }
 
+    /**
+     * @param Fn $other
+     * @return Fn
+     */
+    public function compose(Fn $other)
+    {
+        return $other->pipe($this);
+    }
+
+    /**
+     * @param Fn $other
+     * @return static
+     */
+    public function pipe(Fn $other)
+    {
+        $callable = function () use ($other) {
+            return call_user_func($other, call_user_func_array($this->callable, func_get_args()));
+        };
+
+        return new static($callable, $this->reflection, $this->arguments);
+    }
+
+    /**
+     * @param ReflectionFunctionAbstract $interface
+     * @return static
+     */
     public function implementsInterface(ReflectionFunctionAbstract $interface)
     {
         return (new ImplementationChecker())->checkFunctions($this->reflection, $interface);
@@ -138,7 +168,7 @@ class Fn implements ArrayAccess
     /**
      * @return static
      */
-    public function unbound()
+    public function clearArguments()
     {
         return new static($this->callable, $this->reflection, []);
     }

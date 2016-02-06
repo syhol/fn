@@ -1,14 +1,14 @@
 <?php
 namespace spec\Syhol\Fn;
 
-class TestClass implements TestInterface
+class TestClass
 {
     public function test(array $input, callable $that, $what = 'string', $something = null)
     {
         return 'whooo ' . $input;
     }
 
-    public function implmentedMethod($input)
+    public function implementedMethod($input)
     {
         return 'whooo ' . $input;
     }
