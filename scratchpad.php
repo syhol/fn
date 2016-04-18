@@ -1,8 +1,5 @@
 <?php
 
-
-Invokables:
-
 // Named Function
 // Anon Function
 // Object __invoke
@@ -32,15 +29,15 @@ $add = fn(function($a, $b) {
     return $a + $b;
 });
 
-$add['a'] = 5; // 5 bound to $a
+//$add['a'] = 5; // 5 bound to $a
+//
+//$add(3); //8
+//
+//$add['b'] = 5; // 5 bound to $b
+//
+//$add(); // 10
 
-$add(3); //8 
-
-$add['b'] = 5; // 5 bound to $b
-
-$add(); // 10
-
-$add = $add->clearArguments();
+$add = $add->withoutPartials();
 
 $add['b'] = 5;  // 5 bound to a $b
 
